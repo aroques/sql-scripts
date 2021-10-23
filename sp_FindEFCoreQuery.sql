@@ -9,7 +9,7 @@ AS
 */
 BEGIN
 
-DECLARE @DatabaseName AS NVARCHAR(128) = N'StackOverflow',
+DECLARE @DatabaseName AS NVARCHAR(128) = DB_NAME(),
 	    @ResultCount AS INT = 0;
 
 SELECT 
