@@ -1,11 +1,12 @@
-CREATE PROC dbo.sp_FindEFCorePlan
-	@QueryText AS VARCHAR(MAX)
+ALTER PROC dbo.sp_FindEFCorePlan
+	@QueryText AS VARCHAR(MAX),
+	@MaxPlans INT = 10
 AS
 /*
 	For more info about DMVs see: 
 		https://docs.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-query-plan-transact-sql?view=sql-server-ver15
 	
-	EXEC dbo.sMaint_FindEFCorePlan @QueryText='%Users%'
+	EXEC sGold.sMaint_FindEFCorePlan @QueryText='%dbo.Users%'
 */
 BEGIN
 
@@ -37,16 +38,17 @@ IF @ResultCount = 0
 BEGIN 
 	SELECT Result = 'No plans found.'
 END
-ELSE IF @ResultCount = 1
+ELSE IF @ResultCount <= @MaxPlans
 BEGIN
-	DECLARE @SqlHandle AS VARCHAR(MAX)
-	SELECT @SqlHandle = CONVERT(VARCHAR(MAX), sh.SqlHandle, 1) FROM #sql_handles AS sh
-	SELECT [Executing...] = 'EXEC dbo.sp_BlitzCache @DatabaseName=''' + @DatabaseName + ''', @OnlySqlHandles=''' + @SqlHandle + ''''
-	EXEC dbo.sp_BlitzCache @DatabaseName=@DatabaseName, @OnlySqlHandles=@SqlHandle
+	DECLARE @SqlHandles AS VARCHAR(MAX)
+	SELECT @SqlHandles = STRING_AGG(CONVERT(VARCHAR(MAX), sh.SqlHandle, 1), ',') FROM #sql_handles AS sh
+	SELECT Results = CAST(@ResultCount AS VARCHAR(50)) + ' results found.',
+		[Executing...] = 'EXEC dbo.sp_BlitzCache @DatabaseName=''' + @DatabaseName + ''', @OnlySqlHandles=''' + @SqlHandles + ''''
+	EXEC dbo.sp_BlitzCache @DatabaseName=@DatabaseName, @OnlySqlHandles=@SqlHandles
 END
 ELSE 
 BEGIN
-	SELECT Result = 'More than 1 plan found. Try adding more text to your search so that only 1 plan is found.'
+	SELECT Result = 'More than '+ CAST(@MaxPlans AS VARCHAR(50)) +' plans found. Try adding more text to your search so that ' + CAST(@MaxPlans AS VARCHAR(50)) + ' or less plans are found.'
 	SELECT sh.[Text],
            sh.CreationDateTime,
            sh.ExecutionCnt,
