@@ -1,4 +1,4 @@
-ALTER PROC dbo.sp_FindEFCorePlan
+ALTER PROC dbo.sp_FindEFCorePlans
 	@QueryText AS VARCHAR(MAX),
 	@MaxPlans INT = 10
 AS
