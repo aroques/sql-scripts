@@ -2,4 +2,4 @@
 
 A collection of SQL scripts that you may find useful.
 
-- sp_FindEFCoreQuery
+- sp_FindEFCorePlans
