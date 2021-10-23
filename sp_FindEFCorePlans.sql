@@ -6,7 +6,7 @@ AS
 	For more info about DMVs see: 
 		https://docs.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-query-plan-transact-sql?view=sql-server-ver15
 	
-	EXEC sGold.sMaint_FindEFCorePlan @QueryText='%dbo.Users%'
+	EXEC sGold.sMaint_FindEFCorePlans @QueryText='%dbo.Users%'
 */
 BEGIN
 
